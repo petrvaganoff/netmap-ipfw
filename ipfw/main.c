@@ -261,7 +261,9 @@ ipfw_main(int oldac, char **oldav)
 	/* Save arguments for final freeing of memory. */
 	save_av = av;
 
-	optind = optreset = 1;	/* restart getopt() */
+	/* restart getopt() */
+	optreset = 1;
+	optind = 0;
 	while ((ch = getopt(ac, av, "abcdefhinNp:qs:STtv")) != -1)
 		switch (ch) {
 		case 'a':
