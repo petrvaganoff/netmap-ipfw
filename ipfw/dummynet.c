@@ -552,15 +552,18 @@ read_bandwidth(char *arg, int *bandwidth, char *if_name, int namelen)
 		bw = strtoul(arg, &end, 0);
 		if (*end == 'K' || *end == 'k') {
 			end++;
-			bw *= 1000;
+			if (__builtin_mul_overflow (bw, 1000, &bw))
+				errx(EX_DATAERR, "bandwidth too large");
 		} else if (*end == 'M' || *end == 'm') {
 			end++;
-			bw *= 1000000;
+			if (__builtin_mul_overflow (bw, 1000000, &bw))
+				errx(EX_DATAERR, "bandwidth too large");
 		}
 		if ((*end == 'B' &&
 			_substrcmp2(end, "Bi", "Bit/s") != 0) ||
 		    _substrcmp2(end, "by", "bytes") == 0)
-			bw *= 8;
+			if (__builtin_mul_overflow (bw, 8, &bw))
+				errx(EX_DATAERR, "bandwidth too large");
 
 		if (bw < 0)
 			errx(EX_DATAERR, "bandwidth too large");
